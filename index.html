@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AmitTG</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 30px;
+    font-family: "Poppins", sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 14px;
+    background: #161b22;
+    border: 1px solid #2d333b;
+}
+
+h2 {
+    text-align: center;
+    color: #58a6ff;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+label {
+    display: block;
+    margin: 12px 0 5px;
+    font-size: 14px;
+    color: #9fb3c8;
+}
+
+textarea, input {
+    width: 100%;
+    padding: 10px;
+    background: #0d1117;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+textarea {
+    height: 150px;
+}
+
+textarea:focus, input:focus {
+    border-color: #58a6ff;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: #238636;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1f6f2c;
+}
+
+#copyAllButton {
+    background: #1f6feb;
+}
+
+#copyAllButton:hover {
+    background: #1158c7;
+}
+
+h3 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    color: #58a6ff;
+    font-size: 16px;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 3px;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+li {
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background: #0d1117;
+    border: 1px solid #2d333b;
+}
+
+code {
+    display: block;
+    background: #161b22;
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.link-output {
+    margin-top: 20px;
+    padding: 12px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    text-align: center;
+    color: #58a6ff;
+}
+
+#message {
+    margin-left: 10px;
+    font-size: 13px;
+    color: #3fb950;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h2>Coment Selector</h2>
+
+<label>Paste Your Comment List</label>
+<textarea id="inputList"></textarea>
+
+<label>Link</label>
+<input type="text" id="mainLink" placeholder="Enter link here...">
+
+<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:15px;">
+    <div><label>Quality</label><input type="number" id="QualityCount" value="2"></div>
+    <div><label>Amit</label><input type="number" id="AmitCount" value="1"></div>
+    <div><label>Aakash</label><input type="number" id="AakashCount" value="1"></div>
+    <div><label>Ankur</label><input type="number" id="AnkurCount" value="1"></div>
+    <div><label>Itz</label><input type="number" id="ItzCount" value="3"></div>
+    <div><label>Raj</label><input type="number" id="RajCount"></div>
+</div>
+
+<button onclick="splitText()">Submit</button>
+
+<div id="output"></div>
+<div id="linkSection"></div>
+
+<button id="copyAllButton" onclick="copyAllText()" style="display:none;">Copy All</button>
+<span id="message"></span>
+
+</div>
+
+<script>
+const names = ['Quality','Amit','Aakash','Ankur','Itz','Raj'];
+
+const nameTags = {
+    Quality: "@Qlity_A",
+    Amit: "@AmitTG",
+    Aakash: "@innocent_BYx",
+    Ankur: "@Ankur840",
+    Itz: "@Its_me_Akashii",
+    Raj: "@Raj573838"
+};
+
+function splitText() {
+
+    const output = document.getElementById("output");
+    const linkSection = document.getElementById("linkSection");
+
+    output.innerHTML = "";
+    linkSection.innerHTML = "";
+    document.getElementById("copyAllButton").style.display = "none";
+
+    let text = document.getElementById("inputList").value.trim();
+    let link = document.getElementById("mainLink").value.trim();
+    if (!text) return;
+
+    let items = text.match(/\d+\.[\s\S]*?(?=\d+\.|$)/g);
+    if (!items) return;
+
+    items = items.map(x => x.trim());
+
+    let pointer = 0;
+
+    names.forEach(name => {
+
+        let count = parseInt(document.getElementById(name + "Count").value) || 0;
+        if (name === "Raj") count = items.length - pointer;
+
+        let assigned = items.slice(pointer, pointer + count);
+        pointer += count;
+
+        let tag = nameTags[name] || "";
+
+        let html = `<h3>**${name} ${tag} (${assigned.length})**</h3><ul>`;
+
+        assigned.forEach(sentence => {
+            let number = sentence.match(/^\d+\./)[0];
+            let rest = sentence.replace(/^\d+\.\s*/, "").trim();
+
+            html += `
+            <li>
+                <code>${number} ${rest}</code>
+            </li>`;
+        });
+
+        html += "</ul>";
+        output.innerHTML += html;
+    });
+
+    if (link !== "") {
+        linkSection.innerHTML = `<div class="link-output">🔗 ${link}</div>`;
+    }
+
+    document.getElementById("copyAllButton").style.display = "inline-block";
+}
+
+function copyAllText() {
+
+    const sections = document.querySelectorAll('#output h3');
+    let txt = "";
+
+    sections.forEach(section => {
+        txt += section.textContent + "\n\n";
+        const list = section.nextElementSibling;
+        list.querySelectorAll("code").forEach(c => {
+            txt += c.textContent + "\n\n";
+        });
+    });
+
+    let link = document.getElementById("mainLink").value.trim();
+    if (link !== "") txt += "----- LINK -----\n" + link;
+
+    navigator.clipboard.writeText(txt).then(() => {
+        document.getElementById("message").textContent = "✔ Copied";
+        setTimeout(() => document.getElementById("message").textContent = "", 1500);
+    });
+}
+</script>
+
+</body>
+</html>
