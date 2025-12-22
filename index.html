@@ -196,6 +196,15 @@ code {
 <script>
 const names = ['Quality','Amit','Aakash','Ankur','Itz','Raj'];
 
+    const nameTags = {
+    Quality: "@Qlity_A",
+    Amit: "@AmitTG",
+    Aakash: "@innocent_BYx",
+    Ankur: "@Ankur840",
+    Itz: "@Its_me_Akashii",
+    Raj: "@Raj573838"
+};
+    
 function splitText() {
 
     const output = document.getElementById("output");
@@ -225,7 +234,8 @@ function splitText() {
         let assigned = items.slice(pointer, pointer + count);
         pointer += count;
 
-        let html = `<h3>**${name} (${assigned.length})**</h3><ul>`;
+        let tag = nameTags[name] || "";
+let html = `<h3>**${name} ${tag} (${assigned.length})**</h3><ul>`;
 
         assigned.forEach(sentence => {
             let number = sentence.match(/^\d+\./)[0];
