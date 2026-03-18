@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmitTG · एडमिन कंट्रोल</title>
+    <!-- fonts & icons (font-awesome for admin cog) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Poppins', sans-serif;
+            background: #0a0c10;
+            color: #e6edf3;
+        }
+        .main-wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: flex-start;
+        }
+        /* LEFT SIDE – ADMIN PANEL */
+        .admin-panel {
+            flex: 1 1 320px;
+            background: #161b22;
+            border: 1px solid #2d333b;
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+        }
+        .admin-panel h2 {
+            color: #f78166;
+            font-size: 1.6rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #2d333b;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .admin-panel h2 i {
+            color: #f78166;
+            font-size: 1.8rem;
+        }
+        .admin-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            background: #0d1117;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border: 1px solid #2f3a48;
+            transition: 0.2s;
+        }
+        .admin-row:hover {
+            border-color: #f78166;
+            background: #131a22;
+        }
+        .admin-row .name-tag {
+            min-width: 100px;
+            font-weight: 600;
+            color: #e6edf3;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .admin-row .name-tag i {
+            color: #58a6ff;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .admin-row input[type="text"] {
+            flex: 2;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 30px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: 'Poppins', monospace;
+        }
+        .admin-row input[type="number"] {
+            width: 85px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 30px;
+            padding: 10px 8px;
+            color: #ffb87c;
+            font-weight: 600;
+            text-align: center;
+        }
+        .admin-row button {
+            background: transparent;
+            border: 1px solid #f85149;
+            color: #f85149;
+            border-radius: 40px;
+            width: 40px;
+            height: 40px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .admin-row button:hover {
+            background: #f85149;
+            color: #0d1117;
+        }
+        .add-new {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            background: #1a222c;
+            padding: 18px 16px;
+            border-radius: 24px;
+            border: 1px dashed #3b4b5e;
+        }
+        .add-new input {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 40px;
+            padding: 12px 16px;
+            color: white;
+            flex: 1;
+        }
+        .add-new button {
+            background: #238636;
+            border: none;
+            color: white;
+            border-radius: 40px;
+            padding: 0 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .add-new button:hover {
+            background: #2ea043;
+        }
+        .admin-footer-note {
+            margin-top: 18px;
+            font-size: 0.8rem;
+            color: #7d8590;
+            text-align: center;
+            border-top: 1px solid #2d333b;
+            padding-top: 16px;
+        }
+
+        /* RIGHT SIDE – MAIN APP (original interface, but now dynamic) */
+        .main-app {
+            flex: 3 1 620px;
+            background: #161b22;
+            border: 1px solid #2d333b;
+            border-radius: 24px;
+            padding: 28px 28px;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            border: none;
+        }
+        h2 {
+            color: #58a6ff;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        button, #copyAllButton {
+            background: #238636;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+        #copyAllButton {
+            background: #1f6feb;
+        }
+        .link-output {
+            background: #0d1117;
+        }
+        code {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        #message {
+            margin-left: 15px;
+        }
+        i.fa-cog {
+            color: #e3b341;
+        }
+    </style>
+</head>
+<body>
+<div class="main-wrapper">
+    <!-- एडमिन पैनल (बायाँ) -->
+    <div class="admin-panel" id="adminPanel">
+        <h2><i class="fas fa-cog"></i> आदिन पैनल</h2>
+        <div id="adminRowsContainer">
+            <!-- यहाँ JS डाइनामिक रो बनाएगा -->
+        </div>
+
+        <!-- ऐड नया सेक्शन -->
+        <div class="add-new">
+            <input type="text" id="newName" placeholder="नाम (जैसे: Priya)">
+            <input type="text" id="newTag" placeholder="@टैग" value="@">
+            <input type="number" id="newCount" placeholder="काउंट" value="1" min="1" step="1">
+            <button id="addNameBtn"><i class="fas fa-plus"></i> जोड़ें</button>
+        </div>
+        <div class="admin-footer-note">
+            <i class="fas fa-sync-alt"></i> बदलाव तुरंत मुख्य पेज पर लागू होंगे
+        </div>
+    </div>
+
+    <!-- मुख्य एप्लिकेशन (दायाँ) – original जैसा, डायनामिक रूप से अपडेट होगा -->
+    <div class="main-app" id="mainApp">
+        <div class="container">
+            <h2>AmitTG <span style="font-size:0.7rem; color:#8b949e;">(लाइव एडमिन)</span></h2>
+
+            <label>Paste Your Comment List</label>
+            <textarea id="inputList"></textarea>
+
+            <label>Link</label>
+            <input type="text" id="mainLink" placeholder="Enter link here...">
+
+            <label>Amount</label>
+            <input type="number" id="amount" placeholder="Enter amount" inputmode="numeric">
+
+            <!-- डायनामिक ग्रिड यहाँ रेंडर होगा -->
+            <div id="dynamicGrid" class="grid"></div>
+
+            <button onclick="splitText()">Submit</button>
+
+            <div id="output"></div>
+            <div id="linkSection"></div>
+            <button id="copyAllButton" onclick="copyAllText()" style="display:none;">Copy All</button>
+            <span id="message"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- मास्टर डेटा (स्टोर) ----------
+        let masterNames = ['Quality','Leon','Aakash','Itz','Saju','Arka','Raj'];
+
+        let masterTags = {
+            Quality: "@Qlity_A",
+            Leon: "@Imleonn",
+            Aakash: "@innocent_BYx",
+            Itz: "@Its_me_Akashii",
+            Saju: "@Mr_Saju73",
+            Arka: "@ArkaArkaArka1231",
+            Raj: "@Raj573838"
+        };
+
+        let masterCounts = {
+            Quality: 2,
+            Leon: 2,
+            Aakash: 1,
+            Itz: 3,
+            Saju: 4,
+            Arka: 10,
+            Raj: 0   // राज को हमेशा बाकी items मिलेंगे
+        };
+
+        // ---------- हेल्पर : अपडेट मास्टर काउंट (Raj special handling) ----------
+        function setMasterCount(name, val) {
+            if (name === 'Raj') {
+                // Raj काउंट सीधे सेट नहीं करते – हमेशा रनटाइम पर calculate
+                masterCounts[name] = 0; // placeholder, actual calculation बाद में होगी
+            } else {
+                masterCounts[name] = val;
+            }
+        }
+
+        // ---------- एडमिन पैनल रेंडर ----------
+        function renderAdminPanel() {
+            const container = document.getElementById('adminRowsContainer');
+            let html = '';
+            masterNames.forEach(name => {
+                const tag = masterTags[name] || '';
+                const count = (name === 'Raj') ? 'auto' : (masterCounts[name] ?? 0);
+                html += `
+                    <div class="admin-row" data-name="${name}">
+                        <span class="name-tag"><i class="fas fa-user"></i> ${name}</span>
+                        <input type="text" class="admin-tag" value="${tag.replace(/"/g, '&quot;')}" placeholder="@tag">
+                        <input type="number" class="admin-count" value="${count === 'auto' ? 0 : count}" min="0" ${name === 'Raj' ? 'disabled title="Raj काउंट अपने आप calculate होगा"' : ''}>
+                        <button class="remove-name" ${name === 'Raj' ? 'disabled style="opacity:0.3;"' : ''}><i class="fas fa-times"></i></button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            // अटैच इवेंट्स – टैग / काउंट बदलना, रिमूव
+            document.querySelectorAll('.admin-row').forEach(row => {
+                const name = row.dataset.name;
+                const tagInput = row.querySelector('.admin-tag');
+                const countInput = row.querySelector('.admin-count');
+                const removeBtn = row.querySelector('.remove-name');
+
+                // टैग अपडेट
+                tagInput.addEventListener('input', function(e) {
+                    masterTags[name] = e.target.value;
+                    syncMainApp();   // तुरंत मुख्य पेज ग्रिड बदलो
+                });
+
+                // काउंट अपडेट (Raj को छोड़कर)
+                if (countInput && !countInput.disabled) {
+                    countInput.addEventListener('input', function(e) {
+                        let val = parseInt(e.target.value);
+                        if (isNaN(val) || val < 0) val = 0;
+                        masterCounts[name] = val;
+                        syncMainApp();   // ग्रिड update
+                    });
+                }
+
+                // रिमूव बटन (Raj हटेगा नहीं)
+                if (removeBtn && !removeBtn.disabled) {
+                    removeBtn.addEventListener('click', function() {
+                        // नाम हटाओ
+                        masterNames = masterNames.filter(n => n !== name);
+                        delete masterTags[name];
+                        delete masterCounts[name];
+                        renderAdminPanel();   // एडमिन फिर बनाओ
+                        syncMainApp();         // मुख्य ग्रिड भी अपडेट
+                    });
+                }
+            });
+        }
+
+        // ---------- मुख्य ऐप में ग्रिड बनाना (डायनामिक) ----------
+        function renderMainGrid() {
+            const gridDiv = document.getElementById('dynamicGrid');
+            let gridHtml = '';
+            masterNames.forEach(name => {
+                const countValue = (name === 'Raj') ? '' : (masterCounts[name] ?? 0);
+                const disabledAttr = (name === 'Raj') ? ' disabled' : '';
+                const placeholderVal = (name === 'Raj') ? 'auto' : countValue;
+                gridHtml += `
+                    <div>
+                        <label>${name}</label>
+                        <input type="number" id="${name}Count" value="${countValue}" ${disabledAttr} placeholder="${placeholderVal}" min="0">
+                    </div>
+                `;
+            });
+            gridDiv.innerHTML = gridHtml;
+
+            // अगर Raj काउंट इनपुट को मिले तो उसकी वैल्यू हमेशा 0 रखें, बाद में split में calculate
+            if (document.getElementById('RajCount')) {
+                document.getElementById('RajCount').value = 0;
+            }
+
+            // बाकी इनपुट्स में इवेंट लगाएँ ताकि masterCounts अपडेट हो (अगर यूजर यहाँ बदले)
+            masterNames.forEach(name => {
+                const inp = document.getElementById(name + 'Count');
+                if (inp && name !== 'Raj') {
+                    inp.addEventListener('input', function(e) {
+                        let val = parseInt(e.target.value);
+                        if (isNaN(val)) val = 0;
+                        masterCounts[name] = val;
+                        // एडमिन पैनल भी रिफ्रेश करो (क्योंकि काउंट बदला)
+                        renderAdminPanel();
+                    });
+                }
+            });
+        }
+
+        // ---------- सिंक मेन एप (ग्रिड री-रेंडर) ----------
+        function syncMainApp() {
+            renderMainGrid();      // नए नाम/टैग/काउंट के साथ ग्रिड बनाओ
+            // वैकल्पिक: पुराना आउटपुट क्लियर करें ताकि user देखे नए effect
+            document.getElementById('output').innerHTML = '';
+            document.getElementById('linkSection').innerHTML = '';
+            document.getElementById('copyAllButton').style.display = 'none';
+        }
+
+        // ---------- ऐड नाम फंक्शन ----------
+        function addNewName() {
+            const newNameInput = document.getElementById('newName');
+            const newTagInput = document.getElementById('newTag');
+            const newCountInput = document.getElementById('newCount');
+
+            let rawName = newNameInput.value.trim();
+            let rawTag = newTagInput.value.trim();
+            let rawCount = parseInt(newCountInput.value);
+
+            if (!rawName) {
+                alert('नाम लिखो!');
+                return;
+            }
+            // नाम में space या special से बचने के लिए बस ID बनाने लायक clean (करैक्टर ठीक)
+            // डुप्लीकेट चेक
+            if (masterNames.includes(rawName)) {
+                alert('यह नाम पहले से है');
+                return;
+            }
+            if (!rawTag.startsWith('@')) rawTag = '@' + rawTag;
+            if (isNaN(rawCount) || rawCount < 0) rawCount = 1;
+
+            // मास्टर डेटा में जोड़ें
+            masterNames.push(rawName);
+            masterTags[rawName] = rawTag;
+            masterCounts[rawName] = rawCount;
+
+            // एडमिन पैनल फिर बनाओ
+            renderAdminPanel();
+            // मुख्य ग्रिड बनाओ
+            syncMainApp();
+
+            // इनपुट थोड़ा साफ करें
+            newNameInput.value = '';
+            newTagInput.value = '@';
+            newCountInput.value = '1';
+        }
+
+        // ---------- ओरिजिनल splitText (मॉडिफाइड) ----------
+        window.splitText = function() {
+            const output = document.getElementById("output");
+            const linkSection = document.getElementById("linkSection");
+            output.innerHTML = "";
+            linkSection.innerHTML = "";
+            document.getElementById("copyAllButton").style.display = "none";
+
+            let text = document.getElementById("inputList").value.trim();
+            let link = document.getElementById("mainLink").value.trim();
+            let amount = document.getElementById("amount").value.trim();
+
+            if (!text) return;
+
+            let items = text.match(/\d+\.[\s\S]*?(?=\d+\.|$)/g);
+            if (!items) return;
+
+            items = items.map(x => x.trim());
+            let pointer = 0;
+
+            // हर नाम के लिए लूप (masterNames के क्रम में)
+            masterNames.forEach(name => {
+                let count;
+                if (name === 'Raj') {
+                    count = items.length - pointer;   // बचे हुए सब Raj को
+                } else {
+                    count = masterCounts[name] ?? 0;
+                }
+                if (count < 0) count = 0;
+
+                let assigned = items.slice(pointer, pointer + count);
+                pointer += count;
+
+                let tag = masterTags[name] || "";
+                let html = `<h3>**${name} ${tag} (${assigned.length})**</h3><ul>`;
+
+                assigned.forEach(sentence => {
+                    let numberMatch = sentence.match(/^\d+\./);
+                    if (!numberMatch) return;
+                    let number = numberMatch[0];
+                    let rest = sentence.replace(/^\d+\.\s*/, "").trim();
+                    html += `<li><code>**${number}** \`${rest}\`</code></li>`;
+                });
+
+                html += "</ul>";
+                output.innerHTML += html;
+            });
+
+            if (link !== "") {
+                linkSection.innerHTML += `<div class="link-output">🔗 ${link}</div>`;
+            }
+            if (amount !== "") {
+                linkSection.innerHTML += `<div class="link-output">💰 Amount: ${amount}</div>`;
+            }
+            document.getElementById("copyAllButton").style.display = "inline-block";
+        };
+
+        // ---------- कॉपी ऑल (थोड़ा अपडेट) ----------
+        window.copyAllText = function() {
+            const sections = document.querySelectorAll('#output h3');
+            let txt = "";
+
+            sections.forEach(section => {
+                txt += section.textContent + "\n\n";
+                const list = section.nextElementSibling;
+                if (list) {
+                    list.querySelectorAll("code").forEach(c => {
+                        txt += c.textContent + "\n\n";
+                    });
+                }
+            });
+
+            let link = document.getElementById("mainLink").value.trim();
+            let amount = document.getElementById("amount").value.trim();
+
+            if (link !== "") txt += "----- LINK -----\n" + link + "\n\n";
+            if (amount !== "") txt += "----- AMOUNT -----\n" + amount + "\n\n";
+
+            navigator.clipboard.writeText(txt).then(() => {
+                document.getElementById("message").textContent = "✔ Copied";
+                setTimeout(() => document.getElementById("message").textContent = "", 1500);
+            });
+        };
+
+        // ---------- इनिशियल रेंडर ----------
+        function init() {
+            renderAdminPanel();
+            renderMainGrid();
+
+            // ऐड बटन पर listener
+            document.getElementById('addNameBtn').addEventListener('click', addNewName);
+
+            // ऐड किए गए नामों के काउंट इनपुट पहले से ही renderMainGrid में attach हैं,
+            // किन्तु यदि RajCount दिखे तो उसे 0 पर रखो और डिसेबल करो।
+        }
+
+        init();
+    })();
+</script>
+<!-- note: कुछ extra input values master से sync हैं, राज काउंट ऑटोमैटिक रहेगा -->
+</body>
+</html>
