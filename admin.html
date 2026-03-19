@@ -1,34 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body style="background:#0d1117;color:white;font-family:sans-serif;padding:20px;">
+<body class="bg-gray-900 text-white p-4">
 
-<h2>Admin Panel</h2>
+<div class="max-w-md mx-auto space-y-4">
 
-<button onclick="openAdd()">Add User</button>
-<button onclick="removeUser()">Remove User</button>
+<h2 class="text-xl text-center text-blue-400">Admin Panel</h2>
 
-<div id="popup" style="display:none;margin-top:20px;">
-    <input id="name" placeholder="Name"><br><br>
-    <input id="username" placeholder="@username"><br><br>
-    <input id="count" type="number" placeholder="Count"><br><br>
+<button onclick="openAdd()"
+class="w-full bg-green-600 p-3 rounded-lg">
+Add User
+</button>
 
-    <button onclick="addUser()">Save</button>
-    <button onclick="closeAdd()">Cancel</button>
+<button onclick="removeUser()"
+class="w-full bg-red-600 p-3 rounded-lg">
+Remove User
+</button>
+
+</div>
+
+<!-- POPUP -->
+<div id="popup"
+class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+
+<div class="bg-gray-800 p-5 rounded-lg w-full max-w-sm space-y-3">
+
+<input id="name" placeholder="Name"
+class="w-full p-2 rounded bg-gray-900 border border-gray-700">
+
+<input id="username" placeholder="@username"
+class="w-full p-2 rounded bg-gray-900 border border-gray-700">
+
+<input id="count" type="number" placeholder="Count"
+class="w-full p-2 rounded bg-gray-900 border border-gray-700">
+
+<div class="flex gap-2">
+<button onclick="addUser()"
+class="flex-1 bg-green-600 p-2 rounded">
+Save
+</button>
+
+<button onclick="closeAdd()"
+class="flex-1 bg-gray-600 p-2 rounded">
+Cancel
+</button>
+</div>
+
+</div>
 </div>
 
 <script>
 const API = "https://mapreview.amittgofficials.workers.dev";
 
 function openAdd() {
-    document.getElementById("popup").style.display = "block";
+    document.getElementById("popup").classList.remove("hidden");
 }
 
 function closeAdd() {
-    document.getElementById("popup").style.display = "none";
+    document.getElementById("popup").classList.add("hidden");
 }
 
 async function addUser() {
@@ -47,7 +82,7 @@ async function addUser() {
 }
 
 async function removeUser() {
-    const name = prompt("Enter name to remove");
+    const name = prompt("Enter user name");
 
     if (!name) return;
 
