@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+</head>
+
+<body style="background:#0d1117;color:white;font-family:sans-serif;padding:20px;">
+
+<h2>Admin Panel</h2>
+
+<button onclick="openAdd()">Add User</button>
+<button onclick="removeUser()">Remove User</button>
+
+<div id="popup" style="display:none;margin-top:20px;">
+    <input id="name" placeholder="Name"><br><br>
+    <input id="username" placeholder="@username"><br><br>
+    <input id="count" type="number" placeholder="Count"><br><br>
+
+    <button onclick="addUser()">Save</button>
+    <button onclick="closeAdd()">Cancel</button>
+</div>
+
+<script>
+const API = "https://mapreview.amittgofficials.workers.dev";
+
+function openAdd() {
+    document.getElementById("popup").style.display = "block";
+}
+
+function closeAdd() {
+    document.getElementById("popup").style.display = "none";
+}
+
+async function addUser() {
+    const name = document.getElementById("name").value;
+    const username = document.getElementById("username").value;
+    const count = document.getElementById("count").value;
+
+    await fetch(API + "/add-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, username, count })
+    });
+
+    alert("User Added");
+    closeAdd();
+}
+
+async function removeUser() {
+    const name = prompt("Enter name to remove");
+
+    if (!name) return;
+
+    await fetch(API + "/remove-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+    });
+
+    alert("User Removed");
+}
+</script>
+
+</body>
+</html>
