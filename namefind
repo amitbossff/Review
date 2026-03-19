@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Name Selector - Tailwind Edition</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .glass-effect { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); }
+    .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.08); }
+    .name-btn { transition: all 0.15s ease; }
+    .name-btn.selected { background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(59,130,246,0.15)); border-color: #4ade80; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-200">
+
+
+  <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 bg-slate-900/95 border border-slate-700 text-white px-6 py-3 rounded-full text-sm shadow-2xl opacity-0 pointer-events-none transition-opacity duration-200 z-50 backdrop-blur-sm">
+    Copied!
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-4">
+    
+  
+    <header class="lg:col-span-2 glass-card rounded-2xl p-6 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-blue-600/10 blur-2xl"></div>
+      <div class="relative z-10">
+        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">✨ Name Selector</h1>
+        <p class="text-slate-400 text-sm mt-2 leading-relaxed">
+          <span class="inline-flex items-center gap-1 bg-blue-500/10 px-3 py-1 rounded-full text-blue-300 text-xs mr-2">📝 One name per line</span>
+          enter name
+        </p>
+      </div>
+    </header>
+
+    
+    <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      
+      <div class="glass-card rounded-2xl p-5">
+        <label class="block text-xs font-semibold text-blue-400 uppercase tracking-wider mb-3">📱 App Name & Date</label>
+        <input type="text" id="appNameInput" value="Storytv | 10 March" 
+               class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition"
+               placeholder="e.g., Storytv | 10 March">
+        <div class="flex items-center gap-2 mt-3 text-xs text-slate-500">
+          <span class="bg-slate-800 px-2 py-1 rounded-full">Format</span> App Name | Date
+        </div>
+      </div>
+
+      
+      <div class="glass-card rounded-2xl p-5">
+        <label class="block text-xs font-semibold text-blue-400 uppercase tracking-wider mb-3">👥 Names (One per line)</label>
+        <textarea id="namesListInput" rows="12" 
+                  class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition resize-y"
+                  placeholder="enter name one per line..."></textarea>
+        <div class="flex justify-between items-center mt-3 text-xs text-slate-500">
+          <span class="bg-slate-800 px-2 py-1 rounded-full flex items-center gap-1">📄 <span id="nameCountPreview">0</span> names</span>
+          <span>✓ One per line</span>
+        </div>
+      </div>
+
+      
+      <div class="md:col-span-2 flex flex-wrap items-center gap-3 mt-2">
+        <button class="btn px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-blue-600/20" id="createListBtn">
+          ✨ Create List
+        </button>
+        <button class="btn px-6 py-3 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-medium rounded-xl border border-slate-700 transition-all" id="addMoreBtn">
+          ➕ Add More Apps
+        </button>
+        <span class="ml-auto text-sm text-slate-500 bg-slate-900/50 px-4 py-2 rounded-full border border-slate-800" id="dataStats">0 apps, 0 names</span>
+      </div>
+    </div>
+
+    
+    <div class="lg:col-span-2 flex flex-wrap gap-3 items-center">
+      <div class="relative flex-1">
+        <input id="search" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50" placeholder="🔍 Search names...">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">🔍</span>
+      </div>
+      <button class="btn px-6 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 font-medium rounded-xl border border-emerald-600/30 transition-all" id="copyBtn">
+        📋 Copy Selected
+      </button>
+      <button class="btn px-6 py-3 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-medium rounded-xl border border-slate-700 transition-all" id="clearAllBtn">
+        🗑️ Clear All
+      </button>
+    </div>
+
+  
+    <div class="glass-card rounded-2xl overflow-hidden">
+    
+      <div class="flex flex-wrap gap-2 p-4 border-b border-slate-800 bg-slate-900/30" id="alphaNav"></div>
+      
+      
+      <div id="apps" class="p-3 space-y-4 max-h-[70vh] overflow-y-auto"></div>
+    </div>
+
+    
+    <aside class="glass-card rounded-2xl p-5 sticky top-4 h-fit">
+      <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">📊 Selected Summary</h2>
+      
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+          <div class="text-2xl font-bold text-emerald-400" id="selCount">0</div>
+          <div class="text-xs text-slate-500 mt-1">Selected</div>
+        </div>
+        <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+          <div class="text-2xl font-bold text-blue-400" id="appCount">0</div>
+          <div class="text-xs text-slate-500 mt-1">Apps</div>
+        </div>
+      </div>
+
+      <h3 class="text-sm font-medium text-slate-400 mb-3 flex items-center justify-between">
+        <span>Copy Preview</span>
+        <button class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-full transition-colors" id="copyPreviewBtn">📋 Copy</button>
+      </h3>
+      <div id="preview" class="bg-slate-900/50 rounded-xl p-4 font-mono text-xs leading-relaxed border border-slate-800 min-h-[200px] max-h-[400px] overflow-auto whitespace-pre-wrap">
+        (Select names to see preview...)
+      </div>
+    </aside>
+  </div>
+
+  <script>
+  
+    let userApps = [];
+    const selection = new Map();
+
+  
+    const elApps = document.getElementById("apps");
+    const elAlphaNav = document.getElementById("alphaNav");
+    const elSearch = document.getElementById("search");
+    const elPreview = document.getElementById("preview");
+    const elSelCount = document.getElementById("selCount");
+    const elAppCount = document.getElementById("appCount");
+    const elDataStats = document.getElementById("dataStats");
+    const nameCountPreview = document.getElementById("nameCountPreview");
+    const toast = document.getElementById("toast");
+
+    
+    const appNameInput = document.getElementById("appNameInput");
+    const namesListInput = document.getElementById("namesListInput");
+
+    
+    function keyFor(app, date, name) {
+      return `${app}__${date}__${name}`;
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("opacity-100");
+      setTimeout(() => toast.classList.remove("opacity-100"), 1500);
+    }
+
+    function normalize(s) {
+      return (s || "").toLowerCase().trim();
+    }
+
+    function parseNames(namesStr) {
+      return namesStr.split('\n')
+        .map(line => line.trim())
+        .filter(name => name !== '' && !name.startsWith('//'))
+        .map(name => name.replace(/\s+/g, ' ').trim())
+        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    }
+
+    
+    function updateNameCount() {
+      const names = parseNames(namesListInput.value);
+      nameCountPreview.textContent = names.length;
+    }
+
+    
+    function createAppFromInputs() {
+      const appDateStr = appNameInput.value.trim();
+      const namesStr = namesListInput.value.trim();
+
+      if (!appDateStr || !namesStr) {
+        showToast("❌ Add both Box !");
+        return false;
+      }
+
+      const parts = appDateStr.split('|').map(p => p.trim());
+      if (parts.length < 2) {
+        showToast("❌ App Name | Date format Type the format");
+        return false;
+      }
+
+      const app = parts[0];
+      const date = parts[1];
+      const names = parseNames(namesStr);
+
+      if (names.length === 0) {
+        showToast("❌ No name founded");
+        return false;
+      }
+
+      const existingIndex = userApps.findIndex(a => a.app === app && a.date === date);
+      if (existingIndex !== -1) {
+        if (confirm(`"${app} | ${date}" already exists. Replace it?`)) {
+          userApps[existingIndex] = { app, date, names };
+        } else {
+          return false;
+        }
+      } else {
+        userApps.push({ app, date, names });
+      }
+
+      updateStats();
+      render();
+      showToast(`✅ Added: ${app} (${names.length} names)`);
+      return true;
+    }
+
+    function addMoreApps() {
+      appNameInput.value = '';
+      namesListInput.value = '';
+      updateNameCount();
+      appNameInput.focus();
+      showToast("📝 Add Next app details");
+    }
+
+    function updateStats() {
+      const appCount = userApps.length;
+      const nameCount = userApps.reduce((sum, app) => sum + app.names.length, 0);
+      elDataStats.textContent = `${appCount} apps, ${nameCount} names`;
+    }
+
+    // Build ABCD navigation
+    function buildAlphaNav() {
+      if (userApps.length === 0) {
+        elAlphaNav.innerHTML = '<div class="text-slate-500 text-sm p-2 text-center w-full">📝 Add Your app 1st</div>';
+        return;
+      }
+
+      const allNames = userApps.flatMap(app => app.names);
+      const letters = [...new Set(allNames.map(name => name.charAt(0).toUpperCase()).filter(l => /[A-Z]/.test(l)))].sort();
+      
+      elAlphaNav.innerHTML = '';
+      
+      const allChip = document.createElement('div');
+      allChip.className = 'alpha-chip px-4 py-2 bg-blue-600/20 text-blue-400 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-600/30 transition-all border border-blue-500/30';
+      allChip.textContent = 'All';
+      allChip.dataset.letter = 'all';
+      allChip.addEventListener('click', () => {
+        document.querySelectorAll('.alpha-chip').forEach(c => {
+          c.classList.remove('bg-blue-600/20', 'text-blue-400', 'border-blue-500/30');
+          c.classList.add('bg-slate-800/50', 'text-slate-400', 'border-slate-700');
+        });
+        allChip.classList.add('bg-blue-600/20', 'text-blue-400', 'border-blue-500/30');
+        allChip.classList.remove('bg-slate-800/50', 'text-slate-400', 'border-slate-700');
+        filterByLetter('all');
+      });
+      elAlphaNav.appendChild(allChip);
+
+      letters.forEach(letter => {
+        const chip = document.createElement('div');
+        chip.className = 'alpha-chip px-4 py-2 bg-slate-800/50 text-slate-400 rounded-full text-sm font-medium cursor-pointer hover:bg-slate-700 transition-all border border-slate-700';
+        chip.textContent = letter;
+        chip.dataset.letter = letter;
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.alpha-chip').forEach(c => {
+            c.classList.remove('bg-blue-600/20', 'text-blue-400', 'border-blue-500/30');
+            c.classList.add('bg-slate-800/50', 'text-slate-400', 'border-slate-700');
+          });
+          chip.classList.add('bg-blue-600/20', 'text-blue-400', 'border-blue-500/30');
+          chip.classList.remove('bg-slate-800/50', 'text-slate-400', 'border-slate-700');
+          filterByLetter(letter);
+        });
+        elAlphaNav.appendChild(chip);
+      });
+    }
+
+    
+    function filterByLetter(letter) {
+      const alphaGroups = document.querySelectorAll('.alpha-group');
+      if (letter === 'all') {
+        alphaGroups.forEach(g => g.style.display = 'block');
+        return;
+      }
+      alphaGroups.forEach(group => {
+        const groupLetter = group.querySelector('.alpha-header')?.textContent;
+        group.style.display = groupLetter === letter ? 'block' : 'none';
+      });
+    }
+
+    
+    function render() {
+      elApps.innerHTML = '';
+      const searchQ = normalize(elSearch.value);
+
+      if (userApps.length === 0) {
+        elApps.innerHTML = '<div class="text-center py-12 text-slate-500">📝 first add your list and tap to "Create ABCD List" </div>';
+        return;
+      }
+
+      userApps.forEach((app, appIdx) => {
+        const appDiv = document.createElement('div');
+        appDiv.className = 'glass-card rounded-xl overflow-hidden';
+        appDiv.id = `app-${appIdx}`;
+
+        
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between gap-4 p-4 border-b border-slate-800 bg-slate-900/30';
+        header.innerHTML = `
+          <div>
+            <div class="font-semibold text-blue-300">${app.app}</div>
+            <div class="text-xs text-slate-500 mt-0.5">${app.date} • ${app.names.length} names</div>
+          </div>
+          <div class="flex gap-2">
+            <button class="select-all-${appIdx} text-xs bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 px-3 py-1.5 rounded-full border border-emerald-600/30 transition-all">Select All</button>
+            <button class="clear-all-${appIdx} text-xs bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 px-3 py-1.5 rounded-full border border-rose-600/30 transition-all">Clear</button>
+          </div>
+        `;
+        appDiv.appendChild(header);
+
+        
+        const groups = {};
+        app.names.forEach(name => {
+          if (searchQ && !normalize(name).includes(searchQ)) return;
+          const firstLetter = name.charAt(0).toUpperCase();
+          if (!/[A-Z]/.test(firstLetter)) return;
+          if (!groups[firstLetter]) groups[firstLetter] = [];
+          groups[firstLetter].push(name);
+        });
+
+        const sortedLetters = Object.keys(groups).sort();
+
+        sortedLetters.forEach(letter => {
+          const groupDiv = document.createElement('div');
+          groupDiv.className = 'alpha-group';
+          groupDiv.dataset.letter = letter;
+
+          const headerDiv = document.createElement('div');
+          headerDiv.className = 'alpha-header bg-blue-600/10 px-4 py-2 text-blue-400 font-bold border-b border-slate-800';
+          headerDiv.textContent = letter;
+          groupDiv.appendChild(headerDiv);
+
+          const grid = document.createElement('div');
+          grid.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-3';
+
+          groups[letter].forEach(name => {
+            const btn = document.createElement('button');
+            btn.className = 'name-btn text-left bg-slate-900/50 hover:bg-slate-800/80 border border-slate-700 rounded-lg px-3 py-2 text-sm transition-all relative';
+            btn.textContent = name;
+
+            const k = keyFor(app.app, app.date, name);
+            if (selection.get(k)) {
+              btn.classList.add('selected', 'bg-gradient-to-r', 'from-emerald-600/20', 'to-blue-600/10', 'border-emerald-500/50');
+            }
+
+            btn.addEventListener('click', () => {
+              if (selection.get(k)) selection.delete(k);
+              else selection.set(k, true);
+              btn.classList.toggle('selected');
+              btn.classList.toggle('bg-gradient-to-r');
+              btn.classList.toggle('from-emerald-600/20');
+              btn.classList.toggle('to-blue-600/10');
+              btn.classList.toggle('border-emerald-500/50');
+              updateUI();
+            });
+
+            grid.appendChild(btn);
+          });
+
+          groupDiv.appendChild(grid);
+          appDiv.appendChild(groupDiv);
+        });
+
+        elApps.appendChild(appDiv);
+
+        
+        appDiv.querySelector(`.select-all-${appIdx}`).addEventListener('click', () => {
+          app.names.forEach(name => {
+            if (searchQ && !normalize(name).includes(searchQ)) return;
+            selection.set(keyFor(app.app, app.date, name), true);
+          });
+          updateUI();
+          render();
+        });
+
+        appDiv.querySelector(`.clear-all-${appIdx}`).addEventListener('click', () => {
+          app.names.forEach(name => {
+            selection.delete(keyFor(app.app, app.date, name));
+          });
+          updateUI();
+          render();
+        });
+      });
+
+      buildAlphaNav();
+      updateUI();
+    }
+
+    
+    function buildCopyText() {
+      const grouped = new Map();
+
+      for (const [k, v] of selection.entries()) {
+        if (!v) continue;
+        const [app, date, ...nameParts] = k.split("__");
+        const name = nameParts.join("__");
+        const gk = `${app}__${date}`;
+        
+        if (!grouped.has(gk)) grouped.set(gk, { app, date, names: [] });
+        grouped.get(gk).names.push(name);
+      }
+
+      const blocks = [];
+      for (const [gk, obj] of grouped) {
+        const letterGroups = {};
+        obj.names.forEach(name => {
+          const letter = name.charAt(0).toUpperCase();
+          if (!letterGroups[letter]) letterGroups[letter] = [];
+          letterGroups[letter].push(name);
+        });
+
+        const sortedLetters = Object.keys(letterGroups).sort();
+        
+        let appBlock = `${obj.app} (${obj.date})\n`;
+        appBlock += `─${'─'.repeat(40)}\n`;
+        
+        sortedLetters.forEach(letter => {
+          
+          letterGroups[letter].sort().forEach(name => {
+            appBlock += `${name}\n`;
+          });
+          appBlock += '\n';
+        });
+        
+        blocks.push(appBlock.trim());
+      }
+
+      return blocks.join('\n\n');
+    }
+
+    function updateUI() {
+      const txt = buildCopyText();
+      const selectedCount = [...selection.values()].filter(Boolean).length;
+      
+      const appSet = new Set();
+      for (const k of selection.keys()) {
+        const [app, date] = k.split("__");
+        appSet.add(`${app}__${date}`);
+      }
+
+      elSelCount.textContent = selectedCount;
+      elAppCount.textContent = appSet.size;
+      elPreview.textContent = txt || "(Select names to see preview...)";
+    }
+
+    async function copyToClipboard(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return success;
+      } catch {
+        return false;
+      }
+    }
+
+    
+    document.getElementById('createListBtn').addEventListener('click', createAppFromInputs);
+    document.getElementById('addMoreBtn').addEventListener('click', addMoreApps);
+
+    namesListInput.addEventListener('input', updateNameCount);
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const txt = buildCopyText();
+      if (!txt.trim()) {
+        showToast('No names selected');
+        return;
+      }
+      const success = await copyToClipboard(txt);
+      showToast(success ? '✅ Copied!' : '❌ Copy failed');
+    });
+
+    document.getElementById('copyPreviewBtn').addEventListener('click', async () => {
+      const txt = elPreview.textContent;
+      if (!txt || txt.includes('(Select names')) {
+        showToast('Nothing to copy');
+        return;
+      }
+      const success = await copyToClipboard(txt);
+      showToast(success ? '✅ Preview copied!' : '❌ Copy failed');
+    });
+
+    document.getElementById('clearAllBtn').addEventListener('click', () => {
+      selection.clear();
+      updateUI();
+      render();
+      showToast('Cleared all');
+    });
+
+    let searchTimer;
+    elSearch.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        render();
+        document.querySelectorAll('.alpha-chip').forEach(c => {
+          c.classList.remove('bg-blue-600/20', 'text-blue-400', 'border-blue-500/30');
+          c.classList.add('bg-slate-800/50', 'text-slate-400', 'border-slate-700');
+        });
+        const allChip = document.querySelector('.alpha-chip[data-letter="all"]');
+        if (allChip) {
+          allChip.classList.add('bg-blue-600/20', 'text-blue-400', 'border-blue-500/30');
+          allChip.classList.remove('bg-slate-800/50', 'text-slate-400', 'border-slate-700');
+        }
+      }, 200);
+    });
+
+    window.addEventListener('load', () => {
+      updateNameCount();
+      createAppFromInputs();
+    });
+  </script>
+</body>
+</html>
