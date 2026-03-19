@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AmitTG</title>
+
+<style>
+body { background:#0d1117; color:#e6edf3; font-family:sans-serif; padding:20px; }
+.container { max-width:850px; margin:auto; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
+input, textarea { width:100%; padding:10px; background:#161b22; color:white; border:1px solid #30363d; }
+button { margin-top:15px; padding:10px; cursor:pointer; }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h2>AmitTG</h2>
+
+<textarea id="inputList" placeholder="Paste list..."></textarea>
+<input id="mainLink" placeholder="Link">
+<input id="amount" placeholder="Amount">
+
+<div class="grid" id="dynamicInputs"></div>
+
+<button onclick="splitText()">Submit</button>
+
+<div id="output"></div>
+<div id="linkSection"></div>
+
+<button onclick="copyAllText()">Copy</button>
+<span id="message"></span>
+
+</div>
+
+<script>
+const API = "https://mapreview.amittgofficials.workers.dev";
+
+let users = [];
+let names = [];
+let nameTags = {};
+
+// LOAD USERS
+async function loadUsers() {
+    const res = await fetch(API + "/get-users");
+    users = await res.json();
+
+    names = users.map(u => u.name);
+
+    nameTags = {};
+    users.forEach(u => nameTags[u.name] = u.username);
+
+    renderInputs();
+}
+
+// CREATE INPUTS
+function renderInputs() {
+    const container = document.getElementById("dynamicInputs");
+    container.innerHTML = "";
+
+    users.forEach(user => {
+        container.innerHTML += `
+        <div>
+            <label>${user.name}</label>
+            <input type="number" id="${user.name}Count" value="${user.count}">
+        </div>`;
+    });
+}
+
+// YOUR LOGIC
+function splitText() {
+
+    const output = document.getElementById("output");
+    const linkSection = document.getElementById("linkSection");
+
+    output.innerHTML = "";
+    linkSection.innerHTML = "";
+
+    let text = document.getElementById("inputList").value.trim();
+    let link = document.getElementById("mainLink").value.trim();
+    let amount = document.getElementById("amount").value.trim();
+
+    if (!text) return;
+
+    let items = text.match(/\d+\.[\s\S]*?(?=\d+\.|$)/g);
+    if (!items) return;
+
+    items = items.map(x => x.trim());
+    let pointer = 0;
+
+    names.forEach(name => {
+        let count = parseInt(document.getElementById(name + "Count").value) || 0;
+
+        let assigned = items.slice(pointer, pointer + count);
+        pointer += count;
+
+        let tag = nameTags[name] || "";
+        let html = `<h3>${name} ${tag} (${assigned.length})</h3><ul>`;
+
+        assigned.forEach(sentence => {
+            let number = sentence.match(/^\d+\./)[0];
+            let rest = sentence.replace(/^\d+\.\s*/, "").trim();
+            html += `<li>${number} ${rest}</li>`;
+        });
+
+        html += "</ul>";
+        output.innerHTML += html;
+    });
+
+    if (link) linkSection.innerHTML += `<div>🔗 ${link}</div>`;
+    if (amount) linkSection.innerHTML += `<div>💰 ${amount}</div>`;
+}
+
+// COPY
+function copyAllText() {
+    let txt = document.getElementById("output").innerText;
+
+    let link = document.getElementById("mainLink").value;
+    let amount = document.getElementById("amount").value;
+
+    if (link) txt += "\nLINK:\n" + link;
+    if (amount) txt += "\nAMOUNT:\n" + amount;
+
+    navigator.clipboard.writeText(txt);
+    document.getElementById("message").innerText = "✔ Copied";
+}
+
+loadUsers();
+</script>
+
+</body>
+</html>
