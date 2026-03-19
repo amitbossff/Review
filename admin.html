@@ -13,18 +13,15 @@
 
 <h2 class="text-center text-xl font-semibold text-blue-400">Admin Panel</h2>
 
-<!-- ADD BUTTON -->
 <button onclick="openAdd()"
 class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg font-semibold">
 ➕ Add User
 </button>
 
-<!-- USER LIST -->
 <div id="userList" class="space-y-3"></div>
 
 </div>
 
-<!-- ADD POPUP -->
 <div id="addPopup"
 class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
 
@@ -55,7 +52,6 @@ Cancel
 </div>
 </div>
 
-<!-- EDIT POPUP -->
 <div id="editPopup"
 class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
 
@@ -91,14 +87,12 @@ const API = "https://mapreview.amittgofficials.workers.dev";
 let users = [];
 let currentEditName = "";
 
-// LOAD USERS
 async function loadUsers() {
     const res = await fetch(API + "/get-users");
     users = await res.json();
     renderUsers();
 }
 
-// RENDER USERS
 function renderUsers() {
     const container = document.getElementById("userList");
     container.innerHTML = "";
@@ -128,8 +122,6 @@ function renderUsers() {
     });
 }
 
-// ------------------ POPUPS ------------------
-
 function openAdd() {
     document.getElementById("addPopup").classList.remove("hidden");
 }
@@ -149,7 +141,6 @@ function closeEdit() {
     document.getElementById("editPopup").classList.add("hidden");
 }
 
-// ------------------ VALIDATION ------------------
 
 function toggleBtn(btn, valid) {
     btn.disabled = !valid;
@@ -157,7 +148,6 @@ function toggleBtn(btn, valid) {
     btn.classList.toggle("cursor-not-allowed", !valid);
 }
 
-// ADD validation
 ["addName","addUsername","addCount"].forEach(id=>{
     document.getElementById(id).addEventListener("input",()=>{
         const valid =
@@ -169,7 +159,6 @@ function toggleBtn(btn, valid) {
     });
 });
 
-// EDIT validation
 ["editUsername","editCount"].forEach(id=>{
     document.getElementById(id).addEventListener("input",()=>{
         const valid =
@@ -180,9 +169,7 @@ function toggleBtn(btn, valid) {
     });
 });
 
-// ------------------ ACTIONS ------------------
 
-// ADD
 addBtn.onclick = async () => {
     addBtn.innerText = "Adding...";
 
@@ -201,7 +188,6 @@ addBtn.onclick = async () => {
     loadUsers();
 };
 
-// UPDATE
 editBtn.onclick = async () => {
     editBtn.innerText = "Updating...";
 
@@ -220,7 +206,6 @@ editBtn.onclick = async () => {
     loadUsers();
 };
 
-// REMOVE
 async function removeUser(name) {
     await fetch(API + "/remove-user", {
         method:"POST",
@@ -232,13 +217,11 @@ async function removeUser(name) {
     loadUsers();
 }
 
-// MESSAGE
 function showMsg(text) {
     msg.innerText = text;
     setTimeout(()=>msg.innerText="",1500);
 }
 
-// INIT
 loadUsers();
 </script>
 
