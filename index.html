@@ -51,7 +51,7 @@ const API = "https://mapreview.amittgofficials.workers.dev";
 let users = [];
 let names = [];
 let nameTags = {};
-let finalData = []; // 🔥 important for copy
+let finalData = [];
 
 // LOAD USERS
 async function loadUsers() {
@@ -71,17 +71,19 @@ function renderInputs() {
     const container = document.getElementById("dynamicInputs");
     container.innerHTML = "";
 
-    users.forEach(user => {
+    users.forEach((user, index) => {
         container.innerHTML += `
         <div>
             <label class="text-sm text-gray-400">${user.name}</label>
-            <input type="number" id="${user.name}Count" value="${user.count}"
+            <input type="number" id="${user.name}Count"
+            value="${user.count}"
+            ${index === users.length - 1 ? "disabled placeholder='Auto'" : ""}
             class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
         </div>`;
     });
 }
 
-// 🔥 MAIN LOGIC (IMPROVED + STORES ORIGINAL FORMAT)
+// MAIN LOGIC
 function splitText() {
 
     const output = document.getElementById("output");
@@ -103,15 +105,23 @@ function splitText() {
     items = items.map(x => x.trim());
     let pointer = 0;
 
-    names.forEach(name => {
-        let count = parseInt(document.getElementById(name + "Count").value) || 0;
+    names.forEach((name, index) => {
+
+        let count;
+
+        // 🔥 LAST USER AUTO REMAINING
+        if (index === names.length - 1) {
+            count = items.length - pointer;
+        } else {
+            count = parseInt(document.getElementById(name + "Count").value) || 0;
+        }
 
         let assigned = items.slice(pointer, pointer + count);
         pointer += count;
 
         let tag = nameTags[name] || "";
 
-        // 🔥 store for copy
+        // COPY BLOCK
         let blockText = `**${name} ${tag} (${assigned.length})**\n\n`;
 
         let html = `
@@ -125,7 +135,6 @@ function splitText() {
             let number = sentence.match(/^\d+\./)[0];
             let rest = sentence.replace(/^\d+\.\s*/, "").trim();
 
-            // UI
             html += `
             <li class="bg-[#0d1117] border border-[#2d333b] rounded p-2">
                 <div class="text-sm">
@@ -134,7 +143,6 @@ function splitText() {
                 </div>
             </li>`;
 
-            // COPY FORMAT
             blockText += `**${number}** \`${rest}\`\n\n`;
         });
 
@@ -163,7 +171,7 @@ function splitText() {
     document.getElementById("copyAllButton").classList.remove("hidden");
 }
 
-// 🔥 PERFECT COPY (NO BUGS)
+// COPY
 function copyAllText() {
     navigator.clipboard.writeText(finalData.join("\n"));
     document.getElementById("message").textContent = "✔ Copied";
