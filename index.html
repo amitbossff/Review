@@ -53,7 +53,6 @@ let names = [];
 let nameTags = {};
 let finalData = [];
 
-// LOAD USERS
 async function loadUsers() {
     const res = await fetch(API + "/get-users");
     users = await res.json();
@@ -66,7 +65,6 @@ async function loadUsers() {
     renderInputs();
 }
 
-// INPUTS
 function renderInputs() {
     const container = document.getElementById("dynamicInputs");
     container.innerHTML = "";
@@ -83,7 +81,6 @@ function renderInputs() {
     });
 }
 
-// MAIN LOGIC
 function splitText() {
 
     const output = document.getElementById("output");
@@ -109,7 +106,7 @@ function splitText() {
 
         let count;
 
-        // 🔥 LAST USER AUTO REMAINING
+        
         if (index === names.length - 1) {
             count = items.length - pointer;
         } else {
@@ -121,7 +118,7 @@ function splitText() {
 
         let tag = nameTags[name] || "";
 
-        // COPY BLOCK
+        
         let blockText = `**${name} ${tag} (${assigned.length})**\n\n`;
 
         let html = `
@@ -171,7 +168,6 @@ function splitText() {
     document.getElementById("copyAllButton").classList.remove("hidden");
 }
 
-// COPY
 function copyAllText() {
     navigator.clipboard.writeText(finalData.join("\n"));
     document.getElementById("message").textContent = "✔ Copied";
