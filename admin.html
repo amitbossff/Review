@@ -13,8 +13,9 @@
 
 <h2 class="text-center text-xl font-semibold text-blue-400">Admin Panel</h2>
 
+<!-- ADD BUTTON -->
 <button onclick="openAdd()"
-class="w-full bg-green-600 p-3 rounded-lg">
+class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg font-semibold">
 ➕ Add User
 </button>
 
@@ -24,49 +25,71 @@ class="w-full bg-green-600 p-3 rounded-lg">
 </div>
 
 <!-- ADD POPUP -->
-<div id="addPopup" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
-<div class="bg-[#161b22] p-5 rounded-xl w-full max-w-sm space-y-3">
+<div id="addPopup"
+class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
 
-<h3 class="text-center text-blue-400">Add User</h3>
+<div class="bg-[#161b22] border border-[#2d333b] p-5 rounded-xl w-full max-w-sm space-y-3">
 
-<input id="addName" placeholder="Name" class="input">
-<input id="addUsername" placeholder="@username" class="input">
-<input id="addCount" type="number" placeholder="Count" class="input">
+<h3 class="text-center text-blue-400 font-semibold">Add User</h3>
 
-<button id="addBtn" onclick="addUser()" class="btn-disabled" disabled>Save</button>
-<button onclick="closeAdd()" class="w-full bg-gray-600 p-2 rounded">Cancel</button>
+<input id="addName" placeholder="Name"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<input id="addUsername" placeholder="@username"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<input id="addCount" type="number" placeholder="Count"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<button id="addBtn"
+class="w-full bg-green-600 hover:bg-green-700 p-2 rounded-lg font-semibold opacity-50 cursor-not-allowed"
+disabled>
+Save
+</button>
+
+<button onclick="closeAdd()"
+class="w-full bg-gray-600 p-2 rounded-lg">
+Cancel
+</button>
 
 </div>
 </div>
 
 <!-- EDIT POPUP -->
-<div id="editPopup" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
-<div class="bg-[#161b22] p-5 rounded-xl w-full max-w-sm space-y-3">
+<div id="editPopup"
+class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
 
-<h3 class="text-center text-blue-400">Edit User</h3>
+<div class="bg-[#161b22] border border-[#2d333b] p-5 rounded-xl w-full max-w-sm space-y-3">
 
-<input id="editUsername" placeholder="@username" class="input">
-<input id="editCount" type="number" placeholder="Count" class="input">
+<h3 class="text-center text-blue-400 font-semibold">Edit User</h3>
 
-<button id="editBtn" onclick="updateUser()" class="btn-disabled" disabled>Update</button>
-<button onclick="closeEdit()" class="w-full bg-gray-600 p-2 rounded">Cancel</button>
+<input id="editUsername" placeholder="@username"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<input id="editCount" type="number" placeholder="Count"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<button id="editBtn"
+class="w-full bg-yellow-500 hover:bg-yellow-600 text-black p-2 rounded-lg font-semibold opacity-50 cursor-not-allowed"
+disabled>
+Update
+</button>
+
+<button onclick="closeEdit()"
+class="w-full bg-gray-600 p-2 rounded-lg">
+Cancel
+</button>
 
 </div>
 </div>
 
-<p id="msg" class="text-center text-green-400"></p>
+<p id="msg" class="text-center text-green-400 mt-3"></p>
 
 <script>
 const API = "https://mapreview.amittgofficials.workers.dev";
 
 let users = [];
 let currentEditName = "";
-
-// Tailwind helper classes
-const inputClass = "w-full p-2 rounded bg-[#0d1117] border border-[#30363d]";
-const btnDisabled = "w-full bg-green-600 p-2 rounded opacity-50 cursor-not-allowed";
-
-document.querySelectorAll(".input").forEach(i => i.className = inputClass);
 
 // LOAD USERS
 async function loadUsers() {
@@ -82,26 +105,31 @@ function renderUsers() {
 
     users.forEach(user => {
         container.innerHTML += `
-        <div class="bg-[#161b22] border border-[#2d333b] p-3 rounded-lg">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="font-semibold">${user.name}</p>
-                    <p class="text-sm text-gray-400">${user.username} | ${user.count}</p>
-                </div>
+        <div class="bg-[#161b22] border border-[#2d333b] p-3 rounded-lg flex justify-between items-center">
 
-                <div class="flex gap-2">
-                    <button onclick="openEdit('${user.name}','${user.username}','${user.count}')"
-                    class="bg-yellow-500 px-2 py-1 rounded text-black">Edit</button>
-
-                    <button onclick="removeUser('${user.name}')"
-                    class="bg-red-600 px-2 py-1 rounded">X</button>
-                </div>
+            <div>
+                <p class="font-semibold">${user.name}</p>
+                <p class="text-sm text-gray-400">${user.username} | ${user.count}</p>
             </div>
+
+            <div class="flex gap-2">
+                <button onclick="openEdit('${user.name}','${user.username}','${user.count}')"
+                class="bg-yellow-500 px-2 py-1 rounded text-black text-sm">
+                Edit
+                </button>
+
+                <button onclick="removeUser('${user.name}')"
+                class="bg-red-600 px-2 py-1 rounded text-sm">
+                Remove
+                </button>
+            </div>
+
         </div>`;
     });
 }
 
-// ADD POPUP
+// ------------------ POPUPS ------------------
+
 function openAdd() {
     document.getElementById("addPopup").classList.remove("hidden");
 }
@@ -109,12 +137,11 @@ function closeAdd() {
     document.getElementById("addPopup").classList.add("hidden");
 }
 
-// EDIT POPUP
 function openEdit(name, username, count) {
     currentEditName = name;
 
-    document.getElementById("editUsername").value = username;
-    document.getElementById("editCount").value = count;
+    editUsername.value = username;
+    editCount.value = count;
 
     document.getElementById("editPopup").classList.remove("hidden");
 }
@@ -122,66 +149,78 @@ function closeEdit() {
     document.getElementById("editPopup").classList.add("hidden");
 }
 
-// VALIDATION ADD
+// ------------------ VALIDATION ------------------
+
+function toggleBtn(btn, valid) {
+    btn.disabled = !valid;
+    btn.classList.toggle("opacity-50", !valid);
+    btn.classList.toggle("cursor-not-allowed", !valid);
+}
+
+// ADD validation
 ["addName","addUsername","addCount"].forEach(id=>{
     document.getElementById(id).addEventListener("input",()=>{
         const valid =
-            document.getElementById("addName").value &&
-            document.getElementById("addUsername").value &&
-            document.getElementById("addCount").value;
+            addName.value.trim() &&
+            addUsername.value.trim() &&
+            addCount.value.trim();
 
-        const btn = document.getElementById("addBtn");
-        btn.disabled = !valid;
-        btn.classList.toggle("opacity-50", !valid);
+        toggleBtn(addBtn, valid);
     });
 });
 
-// VALIDATION EDIT
+// EDIT validation
 ["editUsername","editCount"].forEach(id=>{
     document.getElementById(id).addEventListener("input",()=>{
         const valid =
-            document.getElementById("editUsername").value &&
-            document.getElementById("editCount").value;
+            editUsername.value.trim() &&
+            editCount.value.trim();
 
-        const btn = document.getElementById("editBtn");
-        btn.disabled = !valid;
-        btn.classList.toggle("opacity-50", !valid);
+        toggleBtn(editBtn, valid);
     });
 });
 
-// ADD USER
-async function addUser() {
+// ------------------ ACTIONS ------------------
+
+// ADD
+addBtn.onclick = async () => {
+    addBtn.innerText = "Adding...";
+
     await fetch(API + "/add-user", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
-            name: addName.value,
-            username: addUsername.value,
-            count: addCount.value
+            name: addName.value.trim(),
+            username: addUsername.value.trim(),
+            count: addCount.value.trim()
         })
     });
 
+    showMsg("✔ User Added");
     closeAdd();
     loadUsers();
-}
+};
 
-// UPDATE USER
-async function updateUser() {
+// UPDATE
+editBtn.onclick = async () => {
+    editBtn.innerText = "Updating...";
+
     await fetch(API + "/update-user", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
             name: currentEditName,
-            username: editUsername.value,
-            count: editCount.value
+            username: editUsername.value.trim(),
+            count: editCount.value.trim()
         })
     });
 
+    showMsg("✔ User Updated");
     closeEdit();
     loadUsers();
-}
+};
 
-// REMOVE USER
+// REMOVE
 async function removeUser(name) {
     await fetch(API + "/remove-user", {
         method:"POST",
@@ -189,9 +228,17 @@ async function removeUser(name) {
         body: JSON.stringify({ name })
     });
 
+    showMsg("✔ User Removed");
     loadUsers();
 }
 
+// MESSAGE
+function showMsg(text) {
+    msg.innerText = text;
+    setTimeout(()=>msg.innerText="",1500);
+}
+
+// INIT
 loadUsers();
 </script>
 
