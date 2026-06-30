@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AmitTG</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#0d1117] text-[#e6edf3] p-4">
+
+<div class="max-w-2xl mx-auto bg-[#161b22] border border-[#2d333b] rounded-xl p-4 space-y-4">
+
+<h2 class="text-center text-blue-400 text-lg font-semibold">AmitTG</h2>
+
+<label class="text-sm text-gray-400">Paste Your Comment List</label>
+<textarea id="inputList"
+class="w-full h-36 p-3 rounded-lg bg-[#0d1117] border border-[#30363d]"></textarea>
+
+<label class="text-sm text-gray-400">Link</label>
+<input id="mainLink"
+class="w-full p-3 rounded-lg bg-[#0d1117] border border-[#30363d]">
+
+<label class="text-sm text-gray-400">Amount</label>
+<input id="amount" type="number"
+class="w-full p-3 rounded-lg bg-[#0d1117] border border-[#30363d]">
+
+<div id="dynamicInputs" class="grid grid-cols-2 gap-3"></div>
+
+<button onclick="splitText()"
+class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg">
+Submit
+</button>
+
+<div id="output" class="space-y-4"></div>
+<div id="linkSection" class="space-y-2"></div>
+
+<button id="copyAllButton" onclick="copyAllText()"
+class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg hidden">
+Copy All
+</button>
+
+<p id="message" class="text-green-400 text-sm text-center"></p>
+
+</div>
+
+<script>
+const API = "https://mapreview1.amittgofficials.workers.dev";
+
+let users = [];
+let names = [];
+let nameTags = {};
+let finalData = [];
+
+async function loadUsers() {
+    const res = await fetch(API + "/get-users");
+    users = await res.json();
+
+    names = users.map(u => u.name);
+
+    nameTags = {};
+    users.forEach(u => nameTags[u.name] = u.username);
+
+    renderInputs();
+}
+
+function renderInputs() {
+    const container = document.getElementById("dynamicInputs");
+    container.innerHTML = "";
+
+    users.forEach((user, index) => {
+        container.innerHTML += `
+        <div>
+            <label class="text-sm text-gray-400">${user.name}</label>
+            <input type="number" id="${user.name}Count"
+            value="${user.count}"
+            ${index === users.length - 1 ? "disabled placeholder='Auto'" : ""}
+            class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+        </div>`;
+    });
+}
+
+function splitText() {
+
+    const output = document.getElementById("output");
+    const linkSection = document.getElementById("linkSection");
+
+    output.innerHTML = "";
+    linkSection.innerHTML = "";
+    finalData = [];
+
+    let text = document.getElementById("inputList").value.trim();
+    let link = document.getElementById("mainLink").value.trim();
+    let amount = document.getElementById("amount").value.trim();
+
+    if (!text) return;
+
+    let items = text.match(/\d+\.[\s\S]*?(?=\d+\.|$)/g);
+    if (!items) return;
+
+    items = items.map(x => x.trim());
+    let pointer = 0;
+
+    names.forEach((name, index) => {
+
+        let count;
+
+        
+        if (index === names.length - 1) {
+            count = items.length - pointer;
+        } else {
+            count = parseInt(document.getElementById(name + "Count").value) || 0;
+        }
+
+        let assigned = items.slice(pointer, pointer + count);
+        pointer += count;
+
+        let tag = nameTags[name] || "";
+
+        
+        let blockText = `**${name} ${tag} (${assigned.length})**\n\n`;
+
+        let html = `
+        <div>
+        <h3 class="text-blue-400 font-semibold border-b border-[#30363d] pb-1">
+        ${name} ${tag} (${assigned.length})
+        </h3>
+        <ul class="mt-2 space-y-2">`;
+
+        assigned.forEach(sentence => {
+            let number = sentence.match(/^\d+\./)[0];
+            let rest = sentence.replace(/^\d+\.\s*/, "").trim();
+
+            html += `
+            <li class="bg-[#0d1117] border border-[#2d333b] rounded p-2">
+                <div class="text-sm">
+                    <span class="font-bold text-white">${number}</span>
+                    <span class="font-mono text-gray-300"> ${rest}</span>
+                </div>
+            </li>`;
+
+            blockText += `**${number}** \`${rest}\`\n\n`;
+        });
+
+        html += "</ul></div>";
+        output.innerHTML += html;
+
+        finalData.push(blockText);
+    });
+
+    if (link) {
+        linkSection.innerHTML += `
+        <div class="bg-[#0d1117] border border-[#30363d] rounded p-2 text-center text-blue-400">
+        🔗 ${link}
+        </div>`;
+        finalData.push("----- LINK -----\n" + link + "\n\n");
+    }
+
+    if (amount) {
+        linkSection.innerHTML += `
+        <div class="bg-[#0d1117] border border-[#30363d] rounded p-2 text-center text-blue-400">
+        💰 Amount: ${amount}
+        </div>`;
+        finalData.push("----- AMOUNT -----\n" + amount + "\n\n");
+    }
+
+    document.getElementById("copyAllButton").classList.remove("hidden");
+}
+
+function copyAllText() {
+    navigator.clipboard.writeText(finalData.join("\n"));
+    document.getElementById("message").textContent = "✔ Copied";
+    setTimeout(() => document.getElementById("message").textContent = "", 1500);
+}
+
+loadUsers();
+</script>
+
+</body>
+</html>
