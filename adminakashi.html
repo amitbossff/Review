@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#0d1117] text-white p-4">
+
+<div class="max-w-md mx-auto space-y-4">
+
+<h2 class="text-center text-xl font-semibold text-blue-400">Admin Panel</h2>
+
+<button onclick="openAdd()"
+class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg font-semibold">
+➕ Add User
+</button>
+
+<div id="userList" class="space-y-3"></div>
+
+</div>
+
+<div id="addPopup"
+class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+
+<div class="bg-[#161b22] border border-[#2d333b] p-5 rounded-xl w-full max-w-sm space-y-3">
+
+<h3 class="text-center text-blue-400 font-semibold">Add User</h3>
+
+<input id="addName" placeholder="Name"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<input id="addUsername" placeholder="@username"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<input id="addCount" type="number" placeholder="Count"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<button id="addBtn"
+class="w-full bg-green-600 hover:bg-green-700 p-2 rounded-lg font-semibold opacity-50 cursor-not-allowed"
+disabled>
+Save
+</button>
+
+<button onclick="closeAdd()"
+class="w-full bg-gray-600 p-2 rounded-lg">
+Cancel
+</button>
+
+</div>
+</div>
+
+<div id="editPopup"
+class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+
+<div class="bg-[#161b22] border border-[#2d333b] p-5 rounded-xl w-full max-w-sm space-y-3">
+
+<h3 class="text-center text-blue-400 font-semibold">Edit User</h3>
+
+<input id="editUsername" placeholder="@username"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<input id="editCount" type="number" placeholder="Count"
+class="w-full p-2 rounded bg-[#0d1117] border border-[#30363d]">
+
+<button id="editBtn"
+class="w-full bg-yellow-500 hover:bg-yellow-600 text-black p-2 rounded-lg font-semibold opacity-50 cursor-not-allowed"
+disabled>
+Update
+</button>
+
+<button onclick="closeEdit()"
+class="w-full bg-gray-600 p-2 rounded-lg">
+Cancel
+</button>
+
+</div>
+</div>
+
+<p id="msg" class="text-center text-green-400 mt-3"></p>
+
+<script>
+const API = "https://mapreview1.amittgofficials.workers.dev";
+
+let users = [];
+let currentEditName = "";
+
+async function loadUsers() {
+    const res = await fetch(API + "/get-users");
+    users = await res.json();
+    renderUsers();
+}
+
+function renderUsers() {
+    const container = document.getElementById("userList");
+    container.innerHTML = "";
+
+    users.forEach(user => {
+        container.innerHTML += `
+        <div class="bg-[#161b22] border border-[#2d333b] p-3 rounded-lg flex justify-between items-center">
+
+            <div>
+                <p class="font-semibold">${user.name}</p>
+                <p class="text-sm text-gray-400">${user.username} | ${user.count}</p>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="openEdit('${user.name}','${user.username}','${user.count}')"
+                class="bg-yellow-500 px-2 py-1 rounded text-black text-sm">
+                Edit
+                </button>
+
+                <button onclick="removeUser('${user.name}')"
+                class="bg-red-600 px-2 py-1 rounded text-sm">
+                Remove
+                </button>
+            </div>
+
+        </div>`;
+    });
+}
+
+function openAdd() {
+    document.getElementById("addPopup").classList.remove("hidden");
+}
+function closeAdd() {
+    document.getElementById("addPopup").classList.add("hidden");
+}
+
+function openEdit(name, username, count) {
+    currentEditName = name;
+
+    editUsername.value = username;
+    editCount.value = count;
+
+    document.getElementById("editPopup").classList.remove("hidden");
+}
+function closeEdit() {
+    document.getElementById("editPopup").classList.add("hidden");
+}
+
+
+function toggleBtn(btn, valid) {
+    btn.disabled = !valid;
+    btn.classList.toggle("opacity-50", !valid);
+    btn.classList.toggle("cursor-not-allowed", !valid);
+}
+
+["addName","addUsername","addCount"].forEach(id=>{
+    document.getElementById(id).addEventListener("input",()=>{
+        const valid =
+            addName.value.trim() &&
+            addUsername.value.trim() &&
+            addCount.value.trim();
+
+        toggleBtn(addBtn, valid);
+    });
+});
+
+["editUsername","editCount"].forEach(id=>{
+    document.getElementById(id).addEventListener("input",()=>{
+        const valid =
+            editUsername.value.trim() &&
+            editCount.value.trim();
+
+        toggleBtn(editBtn, valid);
+    });
+});
+
+
+addBtn.onclick = async () => {
+    addBtn.innerText = "Adding...";
+
+    await fetch(API + "/add-user", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            name: addName.value.trim(),
+            username: addUsername.value.trim(),
+            count: addCount.value.trim()
+        })
+    });
+
+    showMsg("✔ User Added");
+    closeAdd();
+    loadUsers();
+};
+
+editBtn.onclick = async () => {
+    editBtn.innerText = "Updating...";
+
+    await fetch(API + "/update-user", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            name: currentEditName,
+            username: editUsername.value.trim(),
+            count: editCount.value.trim()
+        })
+    });
+
+    showMsg("✔ User Updated");
+    closeEdit();
+    loadUsers();
+};
+
+async function removeUser(name) {
+    await fetch(API + "/remove-user", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ name })
+    });
+
+    showMsg("✔ User Removed");
+    loadUsers();
+}
+
+function showMsg(text) {
+    msg.innerText = text;
+    setTimeout(()=>msg.innerText="",1500);
+}
+
+loadUsers();
+</script>
+
+</body>
+</html>
