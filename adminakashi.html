@@ -48,6 +48,17 @@
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
 }
+.back-btn {
+    transition: all 0.2s ease;
+}
+.back-btn:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    color: #fff;
+}
+.back-btn:active {
+    transform: scale(0.95);
+}
 </style>
 </head>
 
@@ -56,9 +67,18 @@
 <div class="max-w-md mx-auto p-4 md:p-6">
 
 <!-- Header -->
-<div class="text-center mb-6">
-    <h1 class="text-3xl font-extrabold gradient-text mb-1">Admin Panel</h1>
-    <p class="text-gray-500 text-xs">Manage Users & Counts</p>
+<div class="flex items-center justify-between mb-6 relative">
+    <div class="flex-1">
+        <a href="http://amitxapp.vercel.app/akashi.html" 
+        class="back-btn bg-[#161b22] border border-[#2d333b] rounded-xl p-2.5 text-gray-400 inline-flex items-center gap-2">
+            <i class="bi bi-arrow-left text-lg"></i>
+        </a>
+    </div>
+    <div class="text-center flex-1">
+        <h1 class="text-3xl font-extrabold gradient-text mb-1">Admin Panel</h1>
+        <p class="text-gray-500 text-xs">Manage Users & Counts</p>
+    </div>
+    <div class="flex-1"></div>
 </div>
 
 <!-- Add User Button -->
